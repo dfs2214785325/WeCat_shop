@@ -11,7 +11,7 @@
 
 
 Route::get('think', function () {
-    return 'hello,ThinkPHP5!';
+    return ':)';
 });
 
 //设置一般的路由访问格式
@@ -21,13 +21,20 @@ Route::get('think', function () {
 
 
 //（切记不要传命名空间）
-//banner
+//banner【轮播图】
 Route::get('api/:version/banner/:id', 'api/:version.Banner/getBanner');
-//theme
+
+//theme【专题】
 Route::get('api/:version/theme','api/:version.Theme/getSimpleList');
 Route::get('api/:version/theme/:id','api/:version.Theme/getComplexOne');
-//product
+
+//product【商品】
 Route::get('api/:version/product/recent','api/:version.Product/getRecent');
+Route::get('api/:version/product/by_category','api/:version.Product/getAllInCategory');
+
+//category【分类】
+Route::get('api/:version/category/all','api/:version.Category/getAllCategories');
+
 return [
 
 
