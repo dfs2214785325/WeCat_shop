@@ -12,11 +12,5 @@ namespace app\api\controller\v1;
 class Base
 {
 
-    /**
-     * author: dfs
-     * date: ct
-     */
-    public function asd($data){
 
-    }
 }

@@ -8,11 +8,11 @@
 
 namespace app\api\controller\v1;
 
+use app\api\model\Theme as ThemeModel;
 use app\api\validate\IDCollection;
 use app\api\validate\IDMustBePositiveInt;
 use app\lib\exception\ThemeException;
 use think\Controller;
-use app\api\model\Theme as ThemeModel;
 
 class Theme extends Controller
 {
@@ -30,10 +30,9 @@ class Theme extends Controller
         (new IDCollection())->goCheck();
 
         $ids = explode(',',$ids);
-        $resutl = ThemeModel::with('topicImg,headImg')
-            ->select($ids);
+        $resutl = ThemeModel::with('topicImg,headImg')->select($ids);
 
-        if(!$resutl){
+        if($resutl->isEmpty()){
             throw new ThemeException();
         }
         return $resutl;
@@ -52,7 +51,7 @@ class Theme extends Controller
         (new IDMustBePositiveInt())->goCheck();
 
         $theme = ThemeModel::getThemeWithProducts($id);
-        if(!$theme){
+        if($theme->isEmpty()){
             throw new ThemeException();
         }
 

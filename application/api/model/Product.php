@@ -17,6 +17,8 @@ class Product extends BaseModel
 
     /**
      * 替换图片路径
+     * @param string $value 图片路径
+     * @param array  $data  读取获得的数组
      * @return 替换图片路径更新后的值
      * @date  2019-5-16 21:19
      */
@@ -35,6 +37,14 @@ class Product extends BaseModel
     public static function getMostRecent(int $count)
     {
         $products = self::limit($count)->order('create_time desc')->select();
+
+        return $products;
+    }
+
+
+    public static function getProductsByCategory(int $categoryID)
+    {
+        $products = self::where('category_id',$categoryID)->select();
 
         return $products;
     }
