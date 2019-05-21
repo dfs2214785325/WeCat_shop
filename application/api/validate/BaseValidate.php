@@ -55,7 +55,7 @@ class BaseValidate extends Validate
             return true;
         }else{
             return false;
-            //return $field."必须是正整数";
+
         }
     }
 
