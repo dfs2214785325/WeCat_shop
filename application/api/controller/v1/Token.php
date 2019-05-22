@@ -5,9 +5,7 @@
  * Date: 2019/5/22
  * Time: 13:21
  */
-
 namespace app\api\controller\v1;
-
 
 use app\api\service\UserToken;
 use app\api\validate\TokenGet;
