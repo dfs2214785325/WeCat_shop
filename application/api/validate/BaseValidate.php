@@ -49,7 +49,7 @@ class BaseValidate extends Validate
      * @return bool|string
      * @date  2019-5-13 20:46
      */
-    protected function isPositiveInteger($value,$rule='',$data='',$field='') :bool
+    protected function isPositiveInteger($value,$rule='',$data='',$field='')
     {
         if(is_numeric($value) && is_int($value + 0) && ($value +0) >0 ){
             return true;
@@ -65,7 +65,7 @@ class BaseValidate extends Validate
      * @return bool
      * @date  2019-5-22 13:27
      */
-    protected function isNoEmpty($value,$rule='',$data='',$field='') :bool
+    protected function isNoEmpty($value,$rule='',$data='',$field='')
     {
         if(empty($value)){
             return false;
