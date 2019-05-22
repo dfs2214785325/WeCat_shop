@@ -34,6 +34,7 @@ class UserToken
 
     /**
      * 发送小程序登录请求
+     * @url  /token/user?code=''
      * @param int|string $code code值
      * @throws Exception
      * @date  2019-5-22 21:54
