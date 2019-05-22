@@ -45,17 +45,32 @@ class BaseValidate extends Validate
 
     /**
      * 校验ID是否为正整数
-     * @int $value ID
+     * @param int $value ID
      * @return bool|string
      * @date  2019-5-13 20:46
      */
-    protected function isPositiveInteger($value,$rule='',$data='',$field='')
+    protected function isPositiveInteger($value,$rule='',$data='',$field='') :bool
     {
         if(is_numeric($value) && is_int($value + 0) && ($value +0) >0 ){
             return true;
         }else{
             return false;
 
+        }
+    }
+
+    /**
+     * 判断code是否位空值
+     * @param int $value code验证值
+     * @return bool
+     * @date  2019-5-22 13:27
+     */
+    protected function isNoEmpty($value,$rule='',$data='',$field='') :bool
+    {
+        if(empty($value)){
+            return false;
+        }else{
+            return true;
         }
     }
 
