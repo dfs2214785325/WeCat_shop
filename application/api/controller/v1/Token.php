@@ -23,8 +23,8 @@ class Token
         (new TokenGet())->goCheck();
 
         //实例化service层的类
-        $userToken = new UserToken();
-        $token = $userToken->get($code);
+        $userToken = new UserToken($code);
+        $token = $userToken->get();
 
         return $token;
 

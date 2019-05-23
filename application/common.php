@@ -12,16 +12,16 @@
 // 应用公共文件
 
 /**
- * curl封装
+ * curl封装 GET请求
  * @param string $url get请求地址
  * @param int $http_code 返回的http状态码
  * @return mixed
  * @date  2019-5-22 21:56
  */
-function curl_get($url, &$http_code = 0)
+function curl_get($url, &$httpCode = 0)
 {
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $ch);
+    curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
     //不做证书验证,部署在linux下则改为true
