@@ -5,9 +5,9 @@
  * Date: 2019/5/22
  * Time: 13:32
  */
-
 namespace app\api\service;
 
+use app\api\model\User as UserModel;
 use app\lib\exception\WeChatException;
 use think\Exception;
 
@@ -84,9 +84,59 @@ class UserToken
      */
     private function grantToken(array $wxResult)
     {
-        //取openid，再去查数据库中是否存在。假如不存在，则新增一条记录。
-        //生成令牌，存入缓存中，在将令牌返回到客户端中
+        //取openid，再去查数据库中是否存在。
         $openid = $wxResult['openid'];
-        return $openid;
+        $users = UserModel::getByOpenID($openid);
+
+        if ($users) {
+            //假如存在，取出用户数据
+            $uid = $users->id;
+        } else {
+            //假如不存在，则新增一条记录。
+            $uid = $this->newUseradd($openid);
+        }
+
+        //生成令牌，存入缓存中，在将令牌返回到客户端中，key:令牌 value:wxResult,uid,scope(用户身份)
+        $cachedValue = $this->prepareCachedValue($wxResult, $uid);
+
+    }
+
+    /**
+     * 写入新的openid数据
+     * @param string $openid
+     * @date  2019-5-24
+     */
+    private function newUseradd($openid): int
+    {
+        $user = UserModel::create([
+            'openid' => $openid,
+        ]);
+
+        return $user->id;
+    }
+
+    /**
+     * 存储微信返回值及用户id、权限
+     * @param array $wxResult 微信返回值
+     * @param int $uid 用户ID
+     * @date  2019-5-24
+     */
+    private function prepareCachedValue(array $wxResult, int $uid)
+    {
+        $cachedValue = $wxResult;
+        $cachedValue['uid'] = $uid;
+        //权限值,数值越大越多权限
+        $cachedValue['scope'] = 16;
+
+        return $cachedValue;
+    }
+
+    /**
+     * 将需要数据存入缓存中
+     * @date  2019-5-24 21:18
+     */
+    private function saveToCache(array $cachedValue)
+    {
+        $key = generateToken();
     }
 }
