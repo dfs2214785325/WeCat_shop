@@ -15,7 +15,7 @@ class Token
 
     /**
      * 通过用户的code值来查询它的Token
-     * @param string $code  code值
+     * @param string $code code值
      * @date 2019-5-22 13:30
      */
     public function getToken($code = '')
@@ -26,7 +26,7 @@ class Token
         $userToken = new UserToken($code);
         $token = $userToken->get();
 
-        return $token;
+        return json($token);
 
     }
 }

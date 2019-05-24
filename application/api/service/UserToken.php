@@ -8,10 +8,12 @@
 namespace app\api\service;
 
 use app\api\model\User as UserModel;
+use app\lib\exception\TokenException;
 use app\lib\exception\WeChatException;
 use think\Exception;
+use think\facade\Cache;
 
-class UserToken
+class UserToken extends Token
 {
     //客户端code值
     protected $code;
@@ -98,6 +100,9 @@ class UserToken
 
         //生成令牌，存入缓存中，在将令牌返回到客户端中，key:令牌 value:wxResult,uid,scope(用户身份)
         $cachedValue = $this->prepareCachedValue($wxResult, $uid);
+        $token = $this->saveToCache($cachedValue);
+
+        return $token;
 
     }
 
@@ -135,8 +140,24 @@ class UserToken
      * 将需要数据存入缓存中
      * @date  2019-5-24 21:18
      */
-    private function saveToCache(array $cachedValue)
+    private function saveToCache(array $cachedValue): string
     {
-        $key = generateToken();
+        $key = self::generateToken();
+
+        //数组转为字符串
+        $value = json_encode($cachedValue);
+        //过期时间
+        $expire_in = config('setting.token_expire_in');
+        //$request = cache($key,$value,$expire_in);
+
+        $redis = Cache::store('redis')->set($key, $value, $expire_in);
+        if (!$result) {
+            throw new TokenException([
+                'msg' => '服务器缓存失败',
+                'errorCode' => 10005,
+            ]);
+        }
+
+        return $key;
     }
 }

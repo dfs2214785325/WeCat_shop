@@ -36,3 +36,21 @@ function curl_get($url, &$httpCode = 0)
     return $file_contents;
 
 }
+
+/**
+ * 返回一组随机字符
+ * @date  2019-5-24
+ */
+function getRandChars(int $length): string
+{
+    $str = '';
+    $strPol = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    $max = strlen($strPol) - 1;
+
+    for ($i = 1; $i < $length; $i++) {
+        $str .= $strPol[rand(0, $max)];
+    }
+
+    return $str;
+
+}
