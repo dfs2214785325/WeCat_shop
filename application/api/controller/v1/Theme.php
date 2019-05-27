@@ -39,7 +39,6 @@ class Theme extends Controller
 
     }
 
-
     /**
      * 根据ID查看专题详情
      * @url /theme/:id
