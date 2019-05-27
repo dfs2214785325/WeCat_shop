@@ -63,4 +63,22 @@ class Product extends Controller
 
         return $products;
     }
+
+
+    /**
+     * 获取对应ID的商品信息
+     * @param int $id
+     * @date  2019-5-27
+     */
+    public function getOne($id)
+    {
+        (new IDMustBePositiveInt())->goCheck();
+        $product = ProductModel::getProductDetail($id);
+        if (!$product) {
+            throw new ProductException();
+        }
+
+        return $product;
+
+    }
 }

@@ -11,7 +11,6 @@ use app\api\model\User as UserModel;
 use app\lib\exception\TokenException;
 use app\lib\exception\WeChatException;
 use think\Exception;
-use think\facade\Cache;
 
 class UserToken extends Token
 {
@@ -57,10 +56,10 @@ class UserToken extends Token
             $loginFail = array_key_exists('errcode', $wxResult);
             if ($loginFail) {
                 //失败则抛出异常
-                $this->processLoginError($wxResult);
+                return $this->processLoginError($wxResult);
             } else {
                 //成功
-                $this->grantToken($wxResult);
+                return $this->grantToken($wxResult);
             }
         }
     }
@@ -146,11 +145,12 @@ class UserToken extends Token
 
         //数组转为字符串
         $value = json_encode($cachedValue);
-        //过期时间
-        $expire_in = config('setting.token_expire_in');
-        //$request = cache($key,$value,$expire_in);
 
-        $redis = Cache::store('redis')->set($key, $value, $expire_in);
+        $redis = new \Redis();
+        $redis->connect('127.0.0.1', 6379);
+        $result = $redis->set($key, $value, 7200);
+
+        //$redis = Cache::store('redis')->set($key, $value, $expire_in);
         if (!$result) {
             throw new TokenException([
                 'msg' => '服务器缓存失败',

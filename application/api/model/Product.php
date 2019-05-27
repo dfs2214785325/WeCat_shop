@@ -29,6 +29,24 @@ class Product extends BaseModel
     }
 
     /**
+     * Product_image 一对多关联image
+     * @date  2019-5-27 22:39
+     */
+    public function imgs()
+    {
+        return $this->hasMany('ProductImage', 'product_id', 'id');
+    }
+
+    /**
+     * Product_property 一对多关联图片image
+     * @date  2019-5-27 22:39
+     */
+    public function properties()
+    {
+        return $this->hasMany('ProductProperty', 'product_id', 'id');
+    }
+
+    /**
      * 获取相应数量的新增商品信息
      * @param  int $count 数量
      * @return array|\PDOStatement|string|\think\Collection
@@ -41,11 +59,29 @@ class Product extends BaseModel
         return $products;
     }
 
-
+    /**
+     * 查询分类下的商品信息目
+     * @param int $categoryID 分类ID
+     * @return array|string 查询结果
+     * @date  2019-5-27 22:30
+     */
     public static function getProductsByCategory(int $categoryID)
     {
         $products = self::where('category_id',$categoryID)->select();
 
         return $products;
+    }
+
+    /**
+     * 查询指定ID的商品信息
+     * @param int $id 商品ID
+     * @return array|null 查询结果
+     * @date  2019-5-27 22:31
+     */
+    public static function getProductDetail(int $id)
+    {
+        $product = self::with('imgs,properties')->find($id);
+
+        return $product;
     }
 }
