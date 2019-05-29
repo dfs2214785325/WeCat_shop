@@ -80,7 +80,10 @@ class Product extends BaseModel
      */
     public static function getProductDetail(int $id)
     {
-        $product = self::with('imgs,properties')->find($id);
+        //使用闭包就可以写出很多复杂的sql语句了
+        $product = self::with(['imgs' => function ($query) {
+            $query->with('imgUrl')->order('order ');
+        }, 'properties'])->find($id);
 
         return $product;
     }
