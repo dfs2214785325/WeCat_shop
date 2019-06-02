@@ -33,6 +33,6 @@ Route::group('api/:version/product', function () {
 Route::get('api/:version/category/all', 'api/:version.Category/getAllCategories');
 
 //收货地址
-Route::get('api/:version/address', 'api/:version.Address/createOrUpdateAddress');
+Route::post('api/:version/address', 'api/:version.Address/createOrUpdateAddress');
 
 

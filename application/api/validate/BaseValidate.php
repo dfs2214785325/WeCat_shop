@@ -42,6 +42,28 @@ class BaseValidate extends Validate
         }
     }
 
+    /**
+     * 根据验证器rule规则过滤非法参数
+     * @return array
+     * @date  2019-6-2
+     */
+    public function getDateByRule(array $data)
+    {
+        if (array_key_exists('user_id', $data) || array_key_exists('uid', $data)) {
+            //非法传入uid或者user_id
+            throw new ParameterException([
+                'msg' => "参数中含有非法参数名",
+            ]);
+        }
+
+        $newArray = [];
+        foreach ($this->rule as $key => $value) {
+            $newArray[$key] = $data[$key];
+        }
+
+        return $newArray;
+    }
+
 
     /**
      * 校验ID是否为正整数
@@ -74,5 +96,20 @@ class BaseValidate extends Validate
         }
     }
 
+    /**
+     * 判断是否是正确的电话值
+     * @param string $value 电话
+     * @date  2019-6-2
+     */
+    protected function isMobile(string $value)
+    {
+        $rule = '^1(3|4|5|7|8)[0-9]\d{8}$^';
+        $result = preg_match($rule, $value);
+        if ($result) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 }

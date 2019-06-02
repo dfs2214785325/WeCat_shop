@@ -13,11 +13,11 @@ class AddressNew extends BaseValidate
 {
     //验证规则
     protected $rule = [
-        'name' => 'require|isNotEmpty',
-        'mobile' => 'require|length:11',
-        'province' => 'require|isNotEmpty',
-        'city' => 'require|isNotEmpty',
-        'country' => 'require|isNotEmpty',
-        'detail' => 'require|isNotEmpty',
+        'name' => 'require|isNoEmpty',
+        'mobile' => 'require|isMobile',
+        'province' => 'require|isNoEmpty',
+        'city' => 'require|isNoEmpty',
+        'country' => 'require|isNoEmpty',
+        'detail' => 'require|isNoEmpty',
     ];
 }
