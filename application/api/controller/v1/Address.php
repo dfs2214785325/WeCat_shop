@@ -38,7 +38,6 @@ class Address extends Controller
         } else {
             throw new TokenException();
         }
-
     }
 
     /**
