@@ -24,5 +24,5 @@ class Order extends Controller
      * 失败：返回支付失败结果
      */
 
-
+    const a;
 }
