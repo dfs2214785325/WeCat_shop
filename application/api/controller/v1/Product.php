@@ -89,7 +89,18 @@ class Product extends Controller
      */
     public function deleteOne($id)
     {
+        (new IDMustBePositiveInt())->goCheck();
+        $product = ProductModel::getProductDetail($id);
+        if (!$product) {
+            throw new ProductException();
+        }
 
+        $del = ProductModel::where('id', $id)->delete();
+        if ($del) {
+            return json(['code' => 1, 'msg' => '删除成功']);
+        } else {
+
+        }
     }
 
 }
