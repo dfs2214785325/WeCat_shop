@@ -81,4 +81,15 @@ class Product extends Controller
         return $product;
 
     }
+
+    /**
+     * 删除指定商品数据
+     * @param int $id 商品ID
+     * @date  2019-6-4
+     */
+    public function deleteOne($id)
+    {
+
+    }
+
 }
