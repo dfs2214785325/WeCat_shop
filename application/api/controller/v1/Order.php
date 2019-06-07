@@ -8,9 +8,10 @@
 
 namespace app\api\controller\v1;
 
-use think\Controller;
+use app\api\service\Token as TokenModel;
+use app\api\validate\OrderPlace;
 
-class Order extends Controller
+class Order extends Base
 {
     /*
      * 用户在选择商品，向api提交包含它所选择的商品相关信息
@@ -24,5 +25,31 @@ class Order extends Controller
      * 失败：返回支付失败结果
      */
 
-    const a;
+    //调用类前使用此方法(即将废弃)
+    protected $beforeActionList = [
+        //表示访问placeOrder方法前，先调用checkExclusiveScope方法
+        'checkExclusiveScope' => ['only' => 'placeOrder']
+    ];
+
+
+    /**
+     *
+     * @date  2019-6-8
+     */
+    public function placeOrder()
+    {
+        (new OrderPlace())->goCheck();
+
+        //获取数组参数，必须post.参数名/a
+        $products = input('post.products/a');
+        $uid = TokenModel::getCurrentUid();
+    }
+
+    /**
+     * @date  2019-6-8
+     */
+    public function deleteOrder()
+    {
+
+    }
 }

@@ -111,7 +111,7 @@ class UserToken extends Token
      * @param string $openid
      * @date  2019-5-24
      */
-    private function newUseradd($openid): int
+    private function newUseradd(string $openid): int
     {
         $user = UserModel::create([
             'openid' => $openid,
@@ -151,7 +151,6 @@ class UserToken extends Token
         $redis->connect('127.0.0.1', 6379);
         $result = $redis->set($key, $value, 7200);
 
-        //$redis = Cache::store('redis')->set($key, $value, $expire_in);
         if (!$result) {
             throw new TokenException([
                 'msg' => '服务器缓存失败',

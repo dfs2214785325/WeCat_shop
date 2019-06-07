@@ -35,4 +35,7 @@ Route::get('api/:version/category/all', 'api/:version.Category/getAllCategories'
 //收货地址
 Route::post('api/:version/address', 'api/:version.Address/createOrUpdateAddress');
 
+//支付
+Route::post('api/:version/order', 'api/:version.Order/placeOrder');
+
 
