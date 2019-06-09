@@ -50,6 +50,6 @@ class Order extends Base
      */
     public function deleteOrder()
     {
-
+        return \app\api\service\Order::makeOrderNo();
     }
 }

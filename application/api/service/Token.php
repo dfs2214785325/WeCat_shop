@@ -11,7 +11,6 @@ namespace app\api\service;
 use app\lib\enum\ScopeEnum;
 use app\lib\exception\ForbiddenException;
 use app\lib\exception\TokenException;
-use app\lib\exception\TokenException;
 use think\Exception;
 use think\facade\Request;
 
