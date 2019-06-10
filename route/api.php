@@ -37,7 +37,6 @@ Route::post('api/:version/address', 'api/:version.Address/createOrUpdateAddress'
 
 //支付
 Route::post('api/:version/order', 'api/:version.Order/placeOrder');
-Route::get('api/:version/orderno', 'api/:version.Order/deleteOrder');
 
 
 

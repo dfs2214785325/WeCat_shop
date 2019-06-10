@@ -8,6 +8,7 @@
 
 namespace app\api\controller\v1;
 
+use app\api\service\Order as OrderService;
 use app\api\service\Token as TokenModel;
 use app\api\validate\OrderPlace;
 
@@ -33,8 +34,9 @@ class Order extends Base
 
 
     /**
-     *
+     * 创建订单
      * @date  2019-6-8
+     * @return array
      */
     public function placeOrder()
     {
@@ -43,6 +45,11 @@ class Order extends Base
         //获取数组参数，必须post.参数名/a
         $products = input('post.products/a');
         $uid = TokenModel::getCurrentUid();
+
+        $order = new OrderService();
+        $status = $order->place($uid, $products);
+
+        return $status;
     }
 
     /**
@@ -50,6 +57,6 @@ class Order extends Base
      */
     public function deleteOrder()
     {
-        return \app\api\service\Order::makeOrderNo();
+
     }
 }

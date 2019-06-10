@@ -42,6 +42,11 @@ class Order
 
         // 开始创建订单快照
         $orderSnap = $this->snapOrder($status);
+        $order = $this->createOrder($orderSnap);
+        //var_dump($order);exit;
+        $order['pass'] = true;
+
+        return $order;
     }
 
 
@@ -90,7 +95,7 @@ class Order
             $order->order_no = $orderNo;
             $order->user_id = $this->uid;
             $order->total_price = $snap['orderPrice'];
-            $order->tatal_count = $snap['total_count'];
+            $order->total_count = $snap['totalCount'];
             $order->snap_img = $snap['snapImg'];
             $order->snap_name = $snap['snapName'];
             $order->snap_address = $snap['snapAddress'];
@@ -109,7 +114,8 @@ class Order
             return [
                 'order_no' => $orderNo,
                 'order_id' => $orderID,
-                'create_time' => $createTime;];
+                'create_time' => $createTime
+            ];
 
         } catch (Exception $ex) {
             return $ex;
@@ -132,7 +138,7 @@ class Order
 
         // 取出商品数据
         foreach ($this->oProducts as $oProduct) {
-            $pStatus = $this->getProductStatus($oProduct['product_id'], $oProduct['count'], $this->oProducts);
+            $pStatus = $this->getProductStatus($oProduct['product_id'], $oProduct['count'], $this->products);
             if (!$pStatus['haveStock']) {
                 $status['pass'] = false;
             }
@@ -184,7 +190,7 @@ class Order
             $pStatus['id'] = $product['id'];
             $pStatus['name'] = $product['name'];
             $pStatus['count'] = $oCount;
-            $pStatus['totalPrice'] = $pStatus['price'] * $oCount;
+            $pStatus['totalPrice'] = $product['price'] * $oCount;
             if ($product['stock'] - $oCount >= 0) {
                 $pStatus['haveStock'] = true;
             }

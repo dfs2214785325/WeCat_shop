@@ -33,9 +33,10 @@ class OrderPlace extends BaseValidate
         if (empty($values)) {
             throw new ParameterException(['msg' => '商品列表不能为空！']);
         }
-        if (!in_array($values)) {
-            throw new ParameterException(['msg' => '商品列表参数异常']);
-        }
+//        if (!in_array($values)) {
+//            throw new ParameterException(['msg' => '商品列表参数异常']);
+//        }
+        //var_dump($values);exit;
         foreach ($values as $value) {
             $this->checkProduct($value);
         }
