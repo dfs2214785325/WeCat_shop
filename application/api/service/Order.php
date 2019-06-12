@@ -14,6 +14,7 @@ use app\api\model\Product;
 use app\api\model\UserAddress;
 use app\lib\exception\OrderException;
 use app\lib\exception\UserException;
+use think\Db;
 use think\Exception;
 
 class Order
@@ -25,7 +26,13 @@ class Order
     // 会员uid
     protected $uid;
 
-    //
+
+    /**
+     * @param int $uid 用户ID
+     * @param array $oProducts 客户端传来的订单数据
+     * @return error|array
+     * @date  2019-6-12
+     */
     public function place(int $uid, array $oProducts)
     {
         // oProducts和products作对比
@@ -52,9 +59,11 @@ class Order
 
     /**
      * 生成订单快照
+     * @param array $status 订单商品汇总信息
+     * @return array
      * @date  2019-6-9
      */
-    private function snapOrder(array $status): array
+    private function snapOrder(array $status)
     {
         // 订单快照信息
         $snap = [
@@ -83,10 +92,14 @@ class Order
     /**
      * 创建订单
      * @param array $snap 订单快照信息
+     * @return array|error
+     * @throws Exception
      * @date  2019-6-9
      */
     private function createOrder(array $snap)
     {
+        // 开始事务
+        Db::startTrans();
         try {
             $orderNo = self::makeOrderNo();
 
@@ -110,6 +123,8 @@ class Order
             }
             $orderProduct = new OrderProduct();
             $orderProduct->saveAll($this->oProducts);
+            // 商品提交
+            Db::commit();
 
             return [
                 'order_no' => $orderNo,
@@ -118,15 +133,19 @@ class Order
             ];
 
         } catch (Exception $ex) {
+            // 事务的错误返回
+            Db::rollback();
+
             return $ex;
         }
     }
 
     /**
-     * 获取订单真实状态
+     * 获取订单最终状态
+     * @return array
      * @date  2019-6-8
      */
-    private function getOrderStatus(): array
+    private function getOrderStatus()
     {
         // 订单整体信息
         $status = [
@@ -154,13 +173,14 @@ class Order
 
     /**
      * 获取某一商品的详细参数
-     * @return array
      * @param integer $oPID 商品ID
      * @param integer $oCount 购买数量
      * @param array $products 商品列表
+     * @return array
+     * @throws OrderException
      * @date  2019-6-8
      */
-    private function getProductStatus(int $oPID, int $oCount, array $products): array
+    private function getProductStatus(int $oPID, int $oCount, array $products)
     {
         // 商品下标
         $pIndex = -1;
@@ -203,9 +223,10 @@ class Order
     /**
      * 根据商品列表查找商品详情
      * @param array $oProducts 商品列表
+     * @return array
      * @date  2019-6-8
      */
-    private function getProductByOrder($oProducts): array
+    private function getProductByOrder($oProducts)
     {
         // 循环弹出商品ID
         $oPids = [];
@@ -223,6 +244,8 @@ class Order
 
     /**
      * 查询用户地址详情
+     * @return array
+     * @throws UserException
      * @date  2019-6-9
      */
     private function getUserAddress()
@@ -238,8 +261,10 @@ class Order
         return $userAddress->toArray();
     }
 
+
     /**
      * 生成随机订单号
+     * @return string
      * @date  2019-6-9
      */
     public static function makeOrderNo()
