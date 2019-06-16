@@ -109,4 +109,25 @@ class Token
         }
     }
 
+
+    /**
+     * 检测下订单的UID是否合法
+     * @param int $checkUID 小程序用户UID
+     * @return bool
+     * @date  2019-6-16
+     */
+    public static function isValidOperate($checkUID): bool
+    {
+        if (!$checkUID) {
+            throw new Exception('UID为空');
+        }
+
+        $currentOperateUID = self::getCurrentUid();
+
+        if ($currentOperateUID == $checkUID) {
+            return true;
+        }
+        return false;
+    }
+
 }

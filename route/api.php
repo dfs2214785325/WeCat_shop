@@ -35,8 +35,11 @@ Route::get('api/:version/category/all', 'api/:version.Category/getAllCategories'
 //收货地址
 Route::post('api/:version/address', 'api/:version.Address/createOrUpdateAddress');
 
-//支付
+//创建订单
 Route::post('api/:version/order', 'api/:version.Order/placeOrder');
+
+//微信支付
+Route::post('api/:version/pay/pre_order', 'api/:version.Pay/getPreOrder');
 
 
 

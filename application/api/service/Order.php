@@ -141,7 +141,27 @@ class Order
     }
 
     /**
-     * 获取订单最终状态
+     * 复用方法：检测订单状态【库存是否大于0】
+     * @param int $orderID 订单编号
+     * @return array
+     * @date  2019-6-16
+     */
+    public function checkOrderStatus(int $orderID)
+    {
+        // 取出数据库中订单快照信息
+        $oProducts = OrderProduct::where('order_id',)->select();
+
+        $this->oProducts = $oProducts;
+        $this->products = $this->getProductByOrder($oProducts);
+        // 直接调用
+        $status = $this->getOrderStatus();
+
+        return $status;
+    }
+
+
+    /**
+     * 获取订单最终状态【库存、商品是否正常】
      * @return array
      * @date  2019-6-8
      */
