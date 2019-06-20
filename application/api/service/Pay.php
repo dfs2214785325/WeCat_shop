@@ -14,6 +14,9 @@ use app\lib\enum\OrderStatusEnum;
 use app\lib\exception\OrderException;
 use app\lib\exception\TokenException;
 use think\Exception;
+use think\facade\Log;
+
+require EXTEND_PATH . 'WxPay.WxPay.Api.php';
 
 class Pay
 {
@@ -33,6 +36,9 @@ class Pay
 
 
     /**
+     * 主方法-微信支付
+     * 流程：检测订单状态及参数->生成预订单->微信支付(统一下单)->微信回调(公网IP可访问地址)
+     * @return null
      * @date  2019-6-16
      */
     public function pay()
@@ -47,27 +53,74 @@ class Pay
             return $status;
         }
 
+        return $this->makeWxPreOrder($status['orderPrice'])
+
     }
 
     /**
      * 生成微信预订单
-     * @date  2019-6-16
+     * @param int $totalPrice 订单总金额
      */
-    private function makeWxPreOrder()
+    private function makeWxPreOrder($totalPrice)
     {
+        //获取openid
+        $openid = Token::getCurrentTokenVar('openid');
+        if (!$openid) {
+            throw new TokenException();
+        }
 
+        // 调用微信第三方类
+        $wxOrderData = new \WxPayUnifiedOrder();
+        $wxOrderData->SetOut_trade_no($this->orderNo);
+        $wxOrderData->SetTrade_type('JSPAI');
+        $wxOrderData->SetTotal_fee($totalPrice * 100);
+        $wxOrderData->SetBody('零食商贩');
+        $wxOrderData->SetOpenid($openid);
+        $wxOrderData->SetNotify_url('');
+
+        return $this->getPaySignature($wxOrderData);
+    }
+
+
+    /**
+     * 调用微信支付-统一下单接口
+     * @param array $wxOrderData 微信预订单信息
+     */
+    private function getPaySignature($wxOrderData)
+    {
+        // 调用统一下单接口
+        $wxOrder = \WxPayApi::unifiedOrder($wxOrderData);
+        // 判断微信返回参数
+        if ($wxOrder['return_code'] != 'SUCCESS' || $wxOrder['result_code'] != 'SUCCESS') {
+            Log::record($wxOrder, 'error');
+            Log::record('获取预支付订单失败', 'error');
+        }
+
+        //当return_code & result_code 都为success才会返回
+        //prepay_id
+        $this->recordPreOrder($wxOrder);
+        return null;    // 调试的时候可以返回$wxOrder,让客户端看得见数据信息
+    }
+
+
+    /**
+     * 存储微信成功返回信息的预支付ID
+     * @param array $wxOrder 微信返回数据
+     */
+    private function recordPreOrder($wxOrder)
+    {
+        OrderModel::where('id', $this->orderID)
+            ->update(['prepay_id' => $wxOrder['prepay_id']]);
     }
 
     /**
      * 检测订单各项数据是否正常
      * @throws TokenException
      * @throws OrderException
-     * @return error|bool
-     * @date  2019-6-16
      */
     private function checkOrderValid()
     {
-        $order = OrderModel::where('id', $this->orderID)
+        $order = OrderModel::where('id', '=', $this->orderID)
             ->find();
 
         // 检测订单号是否存在
@@ -86,7 +139,7 @@ class Pay
         // 检测订单支付状态
         if ($order->status != OrderStatusEnum::UNPAID) {
             throw new OrderException([
-                'msg' => '改订单已支付',
+                'msg' => '该订单已支付',
                 'code' => 400,
                 'errorCode' => 80003
             ]);
