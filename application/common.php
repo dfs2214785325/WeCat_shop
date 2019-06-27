@@ -15,7 +15,7 @@
  * curl封装 GET请求
  * @param string $url get请求地址
  * @param int $http_code 返回的http状态码
- * @return mixed
+ * @return string 拼装好的请求地址
  * @date  2019-5-22 21:56
  */
 function curl_get($url, &$httpCode = 0)
@@ -35,6 +35,29 @@ function curl_get($url, &$httpCode = 0)
 
     return $file_contents;
 
+}
+
+/**
+ * curl封装 POST请求
+ * @param $url 请求地址
+ * @param string $rowData 原始的xml地址
+ */
+function curl_post_row($url, $rowData)
+{
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_HEADER, 0);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $rowData);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('content-type:text'));
+
+    $data = curl_exec($ch);
+    curl_close($ch);
+
+    return ($data);
 }
 
 /**

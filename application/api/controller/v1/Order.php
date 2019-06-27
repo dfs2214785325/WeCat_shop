@@ -8,9 +8,11 @@
 
 namespace app\api\controller\v1;
 
+use app\api\model\Order as OrderModel;
 use app\api\service\Order as OrderService;
 use app\api\service\Token as TokenModel;
 use app\api\validate\OrderPlace;
+use app\api\validate\PagingParameter;
 
 class Order extends Base
 {
@@ -21,7 +23,8 @@ class Order extends Base
      * 调用支付接口
      * 继续库存量检测
      * 服务器这边进行微信支付
-     * 根据微信回调，返回不同的结果
+     * 小程序根据服务器返回结果拉起微信支付
+     * 根据微信回调，返回不同的结果（异步，需要公网可访问）
      * 成功：进行库存检测并扣除库存
      * 失败：返回支付失败结果
      */
@@ -29,7 +32,8 @@ class Order extends Base
     //调用类前使用此方法(即将废弃)
     protected $beforeActionList = [
         //表示访问placeOrder方法前，先调用checkExclusiveScope方法
-        'checkExclusiveScope' => ['only' => 'placeOrder']
+        'checkExclusiveScope' => ['only' => 'placeOrder'],
+        'checkPrimaryScope' => ['only' => 'getSummaryByUser'],
     ];
 
 
@@ -50,6 +54,33 @@ class Order extends Base
         $status = $order->place($uid, $products);
 
         return $status;
+    }
+
+    /**
+     * 根据页码数查询用户订单简要信息
+     * @param int $page 起始页
+     * @param int $size 显示订单的最大数量
+     * @date  2019-6-28
+     */
+    public function getSummaryByUser($page = 1, $size = 15)
+    {
+        (new PagingParameter())->goCheck();
+
+        $uid = TokenModel::getCurrentUid();
+        $pagingOrders = OrderModel::getSummaryByUser($uid, $page, $size);
+
+        // 假如返回为空数组
+        if ($pagingOrders->isEmpty()) {
+            return [
+                'data' => [],
+                'current_page' => $pagingOrders->getCurrentPage()
+            ];
+        }
+
+        return [
+            'data' => $pagingOrders->hidden(['id', 'snap_items', 'snap_address', 'prepay_id'])->toArray(),
+            'current_page' => $pagingOrders->getCurrentPage()
+        ];
     }
 
     /**

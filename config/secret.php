@@ -8,5 +8,7 @@
 
 return [
     //token盐
-    'token_salt' => 'lapIm3kf49u'
+    'token_salt' => 'lapIm3kf49u',
+    // 回调地址（公网）
+    'notify_url' => 'http://www.humors.cn/api/v1/pay/notify',
 ];

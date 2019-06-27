@@ -15,7 +15,7 @@ class Base extends Controller
 {
 
     /**
-     * 检测用户权限（地址）
+     * 检测用户权限（会员、管理员都有权限）
      * @date 2019-6-8
      */
     protected function checkPrimaryScope()
@@ -24,7 +24,7 @@ class Base extends Controller
     }
 
     /**
-     * 检测用户权限（订单）
+     * 检测用户权限（仅管理员权限）
      * @date 2019-6-8
      */
     protected function checkExclusiveScope()

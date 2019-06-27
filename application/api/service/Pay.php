@@ -76,7 +76,7 @@ class Pay
         $wxOrderData->SetTotal_fee($totalPrice * 100);
         $wxOrderData->SetBody('零食商贩');
         $wxOrderData->SetOpenid($openid);
-        $wxOrderData->SetNotify_url('');
+        $wxOrderData->SetNotify_url(config('secret.notify_yrl'));
 
         return $this->getPaySignature($wxOrderData);
     }
@@ -92,6 +92,7 @@ class Pay
         $wxOrder = \WxPayApi::unifiedOrder($wxOrderData);
         // 判断微信返回参数
         if ($wxOrder['return_code'] != 'SUCCESS' || $wxOrder['result_code'] != 'SUCCESS') {
+            //错误的话就写入日志当中
             Log::record($wxOrder, 'error');
             Log::record('获取预支付订单失败', 'error');
         }
@@ -99,9 +100,37 @@ class Pay
         //当return_code & result_code 都为success才会返回
         //prepay_id
         $this->recordPreOrder($wxOrder);
-        return null;    // 调试的时候可以返回$wxOrder,让客户端看得见数据信息
+        $signature = $this->sign($wxOrder);
+
+
+        //return null;    // 调试的时候可以返回$wxOrder,让客户端看得见数据信息
+        return $signature;
     }
 
+    /**
+     * 封装支付签名参数
+     * @param array $wxOrder 微信参数数组
+     */
+    private function sign($wxOrder)
+    {
+        $jsApiPayData = new \WxPayJsApiPay();
+        $jsApiPayData->SetAppid(config('wx.app_id'));
+        $jsApiPayData->SetTimeStamp((string)time());    // 强制int类型转换为string类型
+
+        $rand = md5(time() . mt_rand(0, 1000));
+        $jsApiPayData->SetNonceStr($rand);
+        $jsApiPayData->SetPackage('prepay_id=' . $wxOrder['prepay_id']);
+        $jsApiPayData->SetSignType('md5');
+
+        $sign = $jsApiPayData->MakeSign();
+        $rawData = $jsApiPayData->GetValues();
+        $rawData['paySing'] = $sign;
+
+        //因为sdk中有了重复的appid封装，所以就删除重复值
+        unset($rawData['appId']);
+
+        return $rawData;
+    }
 
     /**
      * 存储微信成功返回信息的预支付ID
