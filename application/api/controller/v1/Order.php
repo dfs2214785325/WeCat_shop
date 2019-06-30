@@ -11,8 +11,10 @@ namespace app\api\controller\v1;
 use app\api\model\Order as OrderModel;
 use app\api\service\Order as OrderService;
 use app\api\service\Token as TokenModel;
+use app\api\validate\IDMustBePositiveInt;
 use app\api\validate\OrderPlace;
 use app\api\validate\PagingParameter;
+use app\lib\exception\OrderException;
 
 class Order extends Base
 {
@@ -33,7 +35,7 @@ class Order extends Base
     protected $beforeActionList = [
         //表示访问placeOrder方法前，先调用checkExclusiveScope方法
         'checkExclusiveScope' => ['only' => 'placeOrder'],
-        'checkPrimaryScope' => ['only' => 'getSummaryByUser'],
+        'checkPrimaryScope' => ['only' => 'getSummaryByUser,getDetail'],
     ];
 
 
@@ -84,6 +86,26 @@ class Order extends Base
     }
 
     /**
+     * 查看订单详情信息
+     * @param int $id 订单编号
+     * @return 正确返回array，错误返回异常
+     * @date  2019-6-30
+     */
+    public function getDetail($id)
+    {
+        (new IDMustBePositiveInt())->goCheck();
+
+        $orderDetail = OrderModel::get($id);
+        if (!$orderDetail) {
+            throw new OrderException();
+        }
+
+        return $orderDetail
+            ->hidden(['prepay_id']);
+    }
+
+    /**
+     * 删除订单
      * @date  2019-6-8
      */
     public function deleteOrder()

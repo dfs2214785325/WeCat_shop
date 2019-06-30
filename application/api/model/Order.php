@@ -15,6 +15,26 @@ class Order extends BaseModel
     protected $hidden = ['user_id', 'delete_time', 'update_time'];
     protected $autoWriteTimestamp = true;
 
+    //读取器[商品信息]
+    public function getSnapItemAttr($value)
+    {
+        if (empty($value)) {
+            return null;
+        }
+        //返回格式化的数据
+        return json_decode($value);
+    }
+
+    //读取器[收货地址]
+    public function getSnapAddressAttr($value)
+    {
+        if (empty($value)) {
+            return null;
+        }
+        //返回格式化的数据
+        return json_decode($value);
+    }
+
     /**
      * 查询用户订单简要信息
      * @param int $uid 用户ID

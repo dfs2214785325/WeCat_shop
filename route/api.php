@@ -37,6 +37,7 @@ Route::post('api/:version/address', 'api/:version.Address/createOrUpdateAddress'
 
 //订单
 Route::post('api/:version/order', 'api/:version.Order/placeOrder');
+Route::post('api/:version/order/:id', 'api/:version.Order/getDetail', [], ['id' => '\d+']);
 Route::post('api/:version/order/by_user', 'api/:version.Order/getSummaryByUser');
 
 //微信支付

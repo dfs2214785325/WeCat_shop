@@ -51,7 +51,7 @@ class Pay extends Base
     }
 
     /**
-     * 微信支付异步回调
+     * 接受微信支付异步回调
      * @date  2019-6-22
      */
     public function receiveNotify()
