@@ -7,10 +7,13 @@
  */
 namespace app\api\controller\v1;
 
+use app\api\service\AppToken;
 use app\api\service\UserToken;
+use app\api\validate\AppTokenGet;
 use app\api\validate\TokenGet;
 use app\lib\exception\ParameterException;
 use app\api\service\Token as TokenService;
+use think\cache\driver\Redis;
 
 class Token
 {
@@ -47,4 +50,28 @@ class Token
             'isValid' => $valid
         ];
     }
+
+    /**
+     * 第三方应用获取令牌(类似于商户cms...)
+     * @param $ac:access
+     * @param static $se:secret
+     * @date  2019-7-14
+     */
+    public function getAppToken($ac='' ,$se=''){
+        //允许访问所有域
+        header('Access-Control-Allow-Origin:*');
+        //允许header头带的参数
+        header("Access-Allow-Headers:token,Origin,x-Request-with,Content-Type,Accept")
+        //允许访问类型
+        header('Access-Control-Allow-Methods:POST,GET')
+
+        (new AppTokenGet())->goCheck();
+        $app = new AppToken();
+        $token = $app->get($ac ,$se);
+
+        return [
+            'token' => $token
+        ];
+    }
+
 }
