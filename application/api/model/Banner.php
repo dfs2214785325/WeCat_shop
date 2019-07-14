@@ -7,11 +7,10 @@
  */
 namespace app\api\model;
 
-use think\Db;
-use think\Exception;
-
 class Banner extends BaseModel
 {
+    // php think optimize:schema
+
     //设置隐藏查询显示
     protected $hidden = ['update_time','delete_time'];
 

@@ -25,6 +25,8 @@ class Banner
      */
     public function getBanner($id)
     {
+        // php think optimize:route(用户第一次查询后，在缓存不过期的情况下，都用这个缓存数据返回给用户)
+
        //AOP 面向切面编程~
         (new IDMustBePositiveInt())->goCheck();
 
