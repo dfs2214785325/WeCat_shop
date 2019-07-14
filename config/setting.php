@@ -9,5 +9,5 @@
 
 return [
     //本地图片路径
-    'img_prefix' => 'http://127.0.0.2/images',
+    'img_prefix' => 'http://www.wxshop.com/images',
 ];

@@ -12,7 +12,7 @@ use think\facade\Route;
 //（切记不要传命名空间）
 //token(用post比较安全)
 Route::post('api/:version/token/user', 'api/:version.Token/getToken');
-
+Route::post('api/:version/token/verify', 'api/:version.Token/verifyToken');
 
 //banner【轮播图】
 Route::get('api/:version/banner/:id', 'api/:version.Banner/getBanner');

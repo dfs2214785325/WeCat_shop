@@ -130,4 +130,21 @@ class Token
         return false;
     }
 
+    /**
+     * 验证token
+     * @date  2019-7-14
+     */
+    public static function verifyToken($token)
+    {
+        $redis = new \Redis();
+        $redis->connect('127.0.0.1',6379);
+        $result=  $redis->get($token);
+
+        if($result){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 }
